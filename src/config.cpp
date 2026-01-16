@@ -543,6 +543,7 @@ namespace config {
       {0x11, 0xA2},
       {0x12, 0xA4},
     },
+    {},  // allowed_keys (empty = all keys allowed)
     -1ms,  // back_button_timeout
     500ms,  // key_repeat_delay
     std::chrono::duration<double> {1 / 24.9},  // key_repeat_period
@@ -1190,6 +1191,7 @@ namespace config {
     int_between_f(vars, "fec_percentage", stream.fec_percentage, {1, 255});
 
     map_int_int_f(vars, "keybindings"s, input.keybindings);
+    list_int_f(vars, "allowed_keys"s, input.allowed_keys);
 
     // This config option will only be used by the UI
     // When editing in the config file itself, use "keybindings"

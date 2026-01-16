@@ -626,6 +626,23 @@ namespace input {
   }
 
   /**
+   * @brief Check if a key is allowed based on the allowed_keys configuration.
+   * @param keycode The keycode to check (after mapping).
+   * @return true if the key is allowed, false otherwise.
+   */
+  bool is_key_allowed(short keycode) {
+    // If allowed_keys is empty, all keys are allowed
+    if (config::input.allowed_keys.empty()) {
+      return true;
+    }
+
+    // Check if the key is in the allowed list
+    return std::find(config::input.allowed_keys.begin(),
+                     config::input.allowed_keys.end(),
+                     keycode) != config::input.allowed_keys.end();
+  }
+
+  /**
    * @brief Update flags for keyboard shortcut combo's
    */
   inline void update_shortcutFlags(int *flags, short keyCode, bool release) {
@@ -726,6 +743,14 @@ namespace input {
 
     auto release = util::endian::little(packet->header.magic) == KEY_UP_EVENT_MAGIC;
     auto keyCode = packet->keyCode & 0x00FF;
+
+    // Apply key mapping first, then check if the mapped key is allowed
+    auto mappedKeyCode = map_keycode(keyCode);
+    if (!is_key_allowed(mappedKeyCode)) {
+      BOOST_LOG(debug) << "Key blocked by allowed_keys filter: 0x"sv << util::hex((std::uint8_t) keyCode).to_string_view()
+                       << " -> 0x"sv << util::hex((std::uint8_t) mappedKeyCode).to_string_view();
+      return;
+    }
 
     // Set synthetic modifier flags if the keyboard packet is requesting modifier
     // keys that are not current pressed.

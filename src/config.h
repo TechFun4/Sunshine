@@ -184,6 +184,7 @@ namespace config {
 
   struct input_t {
     std::unordered_map<int, int> keybindings;
+    std::vector<int> allowed_keys;  // Empty means all keys allowed
 
     std::chrono::milliseconds back_button_timeout;
     std::chrono::milliseconds key_repeat_delay;
