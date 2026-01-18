@@ -7,6 +7,7 @@
 
 #include <chrono>
 #include <regex>
+#include <boost/property_tree/json_parser.hpp>
 
 #include "../config.h"
 #include "../logging.h"
