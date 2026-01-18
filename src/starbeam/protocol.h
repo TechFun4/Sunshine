@@ -17,22 +17,22 @@ namespace protocol {
 
   // Message types
   enum class MessageType {
-    Register,
-    RegisterAck,
-    RegisterError,
-    HttpRequest,
-    HttpResponse,
-    RtspRequest,
-    RtspResponse,
-    UdpChannelSetup,
-    UdpChannelAck,
-    UdpChannelClose,
-    SessionStart,
-    SessionEnd,
-    Ping,
-    Pong,
-    Error,
-    Unknown
+    Register,         ///< Host registration request
+    RegisterAck,      ///< Host registration acknowledgment
+    RegisterError,    ///< Host registration error
+    HttpRequest,      ///< HTTP request from client to host
+    HttpResponse,     ///< HTTP response from host to client
+    RtspRequest,      ///< RTSP request from client to host
+    RtspResponse,     ///< RTSP response from host to client
+    UdpChannelSetup,  ///< UDP channel setup request
+    UdpChannelAck,    ///< UDP channel setup acknowledgment
+    UdpChannelClose,  ///< UDP channel close notification
+    SessionStart,     ///< Streaming session start notification
+    SessionEnd,       ///< Streaming session end notification
+    Ping,             ///< Ping message
+    Pong,             ///< Pong response
+    Error,            ///< Error message
+    Unknown           ///< Unknown or malformed message
   };
 
   // Port assignment structure
@@ -123,9 +123,9 @@ namespace protocol {
 
   // UDP channel types
   enum class UdpChannelType {
-    Video,
-    Audio,
-    Control
+    Video,    ///< Video stream channel
+    Audio,    ///< Audio stream channel
+    Control   ///< Control stream channel
   };
 
   // UDP channel setup (from Starbeam to Sunlight)

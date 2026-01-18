@@ -32,11 +32,11 @@ namespace starbeam {
 
   // Connection state
   enum class ConnectionState {
-    Disconnected,
-    Connecting,
-    Connected,
-    Registered,
-    Error
+    Disconnected,  ///< Not connected to relay server
+    Connecting,    ///< Connection attempt in progress
+    Connected,     ///< WebSocket connected, awaiting registration
+    Registered,    ///< Successfully registered with relay server
+    Error          ///< Connection error occurred
   };
 
   // Callback types
