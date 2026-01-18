@@ -18,6 +18,10 @@
 #include "main.h"
 #include "nvhttp.h"
 #include "process.h"
+#include "starbeam/client.h"
+#include "starbeam/handler.h"
+#include "starbeam/tunnel.h"
+#include "starbeam/udp.h"
 #include "system_tray.h"
 #include "upnp.h"
 #include "video.h"
@@ -361,6 +365,18 @@ int main(int argc, char *argv[]) {
     upnp_unmap = upnp::start();
   });
 
+  // Initialize Starbeam relay client if enabled
+  if (starbeam::is_enabled()) {
+    if (starbeam::initialize()) {
+      starbeam::udp::initialize();
+      starbeam::tunnel::initialize();
+      starbeam::handler::initialize();
+      BOOST_LOG(info) << "Starbeam relay client started"sv;
+    } else {
+      BOOST_LOG(warning) << "Starbeam relay client failed to initialize"sv;
+    }
+  }
+
   // FIXME: Temporary workaround: Simple-Web_server needs to be updated or replaced
   if (shutdown_event->peek()) {
     return lifetime::desired_exit_code;
@@ -397,6 +413,14 @@ int main(int argc, char *argv[]) {
   httpThread.join();
   configThread.join();
   rtspThread.join();
+
+  // Shutdown Starbeam relay client
+  if (starbeam::is_enabled()) {
+    starbeam::handler::shutdown();
+    starbeam::tunnel::shutdown();
+    starbeam::udp::shutdown();
+    starbeam::shutdown();
+  }
 
   task_pool.stop();
   task_pool.join();

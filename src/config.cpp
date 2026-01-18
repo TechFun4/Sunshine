@@ -584,6 +584,14 @@ namespace config {
     {},  // prep commands
   };
 
+  starbeam_t starbeam {
+    false,  // enabled
+    {},     // server_url
+    {},     // auth_key
+    {},     // host_id
+    5,      // reconnect_interval_seconds
+  };
+
   bool endline(char ch) {
     return ch == '\r' || ch == '\n';
   }
@@ -1305,6 +1313,13 @@ namespace config {
         }
       }
     }
+
+    // Starbeam relay configuration
+    bool_f(vars, "starbeam_enabled", starbeam.enabled);
+    string_f(vars, "starbeam_server", starbeam.server_url);
+    string_f(vars, "starbeam_auth_key", starbeam.auth_key);
+    string_f(vars, "starbeam_host_id", starbeam.host_id);
+    int_between_f(vars, "starbeam_reconnect_interval", starbeam.reconnect_interval_seconds, {1, 300});
 
     auto it = vars.find("flags"s);
     if (it != std::end(vars)) {

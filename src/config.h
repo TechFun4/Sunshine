@@ -262,12 +262,21 @@ namespace config {
     std::vector<prep_cmd_t> prep_cmds;
   };
 
+  struct starbeam_t {
+    bool enabled;                    // Enable Starbeam proxy mode
+    std::string server_url;          // wss://relay.example.com:8443
+    std::string auth_key;            // Pre-shared auth key
+    std::string host_id;             // Optional: fixed host identifier
+    int reconnect_interval_seconds;  // Reconnect interval (default: 5)
+  };
+
   extern video_t video;
   extern audio_t audio;
   extern stream_t stream;
   extern nvhttp_t nvhttp;
   extern input_t input;
   extern sunshine_t sunshine;
+  extern starbeam_t starbeam;
 
   int parse(int argc, char *argv[]);
   std::unordered_map<std::string, std::string> parse_config(const std::string_view &file_content);

@@ -119,6 +119,16 @@ set(SUNSHINE_TARGET_FILES
         "${CMAKE_SOURCE_DIR}/src/stat_trackers.cpp"
         "${CMAKE_SOURCE_DIR}/src/rswrapper.h"
         "${CMAKE_SOURCE_DIR}/src/rswrapper.c"
+        "${CMAKE_SOURCE_DIR}/src/starbeam/client.cpp"
+        "${CMAKE_SOURCE_DIR}/src/starbeam/client.h"
+        "${CMAKE_SOURCE_DIR}/src/starbeam/handler.cpp"
+        "${CMAKE_SOURCE_DIR}/src/starbeam/handler.h"
+        "${CMAKE_SOURCE_DIR}/src/starbeam/protocol.cpp"
+        "${CMAKE_SOURCE_DIR}/src/starbeam/protocol.h"
+        "${CMAKE_SOURCE_DIR}/src/starbeam/tunnel.cpp"
+        "${CMAKE_SOURCE_DIR}/src/starbeam/tunnel.h"
+        "${CMAKE_SOURCE_DIR}/src/starbeam/udp.cpp"
+        "${CMAKE_SOURCE_DIR}/src/starbeam/udp.h"
         ${PLATFORM_TARGET_FILES})
 
 if(NOT SUNSHINE_ASSETS_DIR_DEF)

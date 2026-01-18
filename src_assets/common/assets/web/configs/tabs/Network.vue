@@ -159,6 +159,53 @@ const effectivePort = computed(() => +config.value?.port ?? defaultMoonlightPort
       <div class="form-text">{{ $t('config.ping_timeout_desc') }}</div>
     </div>
 
+    <!-- Starbeam Relay Section -->
+    <hr class="my-4" />
+    <h5 class="mb-3">{{ $t('config.starbeam_title') }}</h5>
+    <div class="alert alert-info mb-3">
+      <i class="fa-solid fa-circle-info"></i> {{ $t('config.starbeam_info') }}
+    </div>
+
+    <!-- Starbeam Enabled -->
+    <Checkbox class="mb-3"
+              id="starbeam_enabled"
+              locale-prefix="config"
+              v-model="config.starbeam_enabled"
+              default="false"
+    ></Checkbox>
+
+    <!-- Starbeam Server URL -->
+    <div class="mb-3">
+      <label for="starbeam_server" class="form-label">{{ $t('config.starbeam_server') }}</label>
+      <input type="text" class="form-control" id="starbeam_server" placeholder="wss://relay.example.com:8443"
+             v-model="config.starbeam_server" :disabled="config.starbeam_enabled !== 'true' && config.starbeam_enabled !== true" />
+      <div class="form-text">{{ $t('config.starbeam_server_desc') }}</div>
+    </div>
+
+    <!-- Starbeam Auth Key -->
+    <div class="mb-3">
+      <label for="starbeam_auth_key" class="form-label">{{ $t('config.starbeam_auth_key') }}</label>
+      <input type="password" class="form-control" id="starbeam_auth_key" placeholder=""
+             v-model="config.starbeam_auth_key" :disabled="config.starbeam_enabled !== 'true' && config.starbeam_enabled !== true" />
+      <div class="form-text">{{ $t('config.starbeam_auth_key_desc') }}</div>
+    </div>
+
+    <!-- Starbeam Host ID -->
+    <div class="mb-3">
+      <label for="starbeam_host_id" class="form-label">{{ $t('config.starbeam_host_id') }}</label>
+      <input type="text" class="form-control" id="starbeam_host_id" placeholder=""
+             v-model="config.starbeam_host_id" :disabled="config.starbeam_enabled !== 'true' && config.starbeam_enabled !== true" />
+      <div class="form-text">{{ $t('config.starbeam_host_id_desc') }}</div>
+    </div>
+
+    <!-- Starbeam Reconnect Interval -->
+    <div class="mb-3">
+      <label for="starbeam_reconnect_interval" class="form-label">{{ $t('config.starbeam_reconnect_interval') }}</label>
+      <input type="number" min="1" max="300" class="form-control" id="starbeam_reconnect_interval" placeholder="5"
+             v-model="config.starbeam_reconnect_interval" :disabled="config.starbeam_enabled !== 'true' && config.starbeam_enabled !== true" />
+      <div class="form-text">{{ $t('config.starbeam_reconnect_interval_desc') }}</div>
+    </div>
+
   </div>
 </template>
 

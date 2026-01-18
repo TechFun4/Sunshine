@@ -384,7 +384,19 @@
     "wan_encryption_mode": "WAN Encryption Mode",
     "wan_encryption_mode_1": "Enabled for supported clients (default)",
     "wan_encryption_mode_2": "Required for all clients",
-    "wan_encryption_mode_desc": "This determines when encryption will be used when streaming over the Internet. Encryption can reduce streaming performance, particularly on less powerful hosts and clients."
+    "wan_encryption_mode_desc": "This determines when encryption will be used when streaming over the Internet. Encryption can reduce streaming performance, particularly on less powerful hosts and clients.",
+    "starbeam_title": "Starbeam Relay",
+    "starbeam_info": "Starbeam allows streaming over the Internet by connecting to a relay server. This enables Moonlight clients to connect to Sunshine even when they are not on the same local network.",
+    "starbeam_enabled": "Enable Starbeam Relay",
+    "starbeam_enabled_desc": "Connect to a Starbeam relay server for remote streaming capabilities.",
+    "starbeam_server": "Relay Server URL",
+    "starbeam_server_desc": "The WebSocket URL of the Starbeam relay server (e.g., wss://relay.example.com:8443).",
+    "starbeam_auth_key": "Authentication Key",
+    "starbeam_auth_key_desc": "The pre-shared authentication key for connecting to the relay server.",
+    "starbeam_host_id": "Host ID (Optional)",
+    "starbeam_host_id_desc": "A fixed host identifier for stable port assignments. Leave blank to auto-generate.",
+    "starbeam_reconnect_interval": "Reconnect Interval",
+    "starbeam_reconnect_interval_desc": "How often (in seconds) to retry connecting to the relay server after a disconnection. Range: 1-300 seconds."
   },
   "index": {
     "description": "Sunshine is a self-hosted game stream host for Moonlight.",
