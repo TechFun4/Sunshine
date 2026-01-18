@@ -126,3 +126,11 @@ if("${BUILD_TYPE}" STREQUAL "XDEBUG")
 else()
     add_definitions(-DNDEBUG)
 endif()
+
+# src/starbeam - suppress false positive array-bounds warning from Boost ASIO
+set_source_files_properties("${CMAKE_SOURCE_DIR}/src/starbeam/client.cpp"
+        DIRECTORY "${CMAKE_SOURCE_DIR}" "${TEST_DIR}"
+        PROPERTIES COMPILE_FLAGS "-Wno-array-bounds")
+set_source_files_properties("${CMAKE_SOURCE_DIR}/src/starbeam/udp.cpp"
+        DIRECTORY "${CMAKE_SOURCE_DIR}" "${TEST_DIR}"
+        PROPERTIES COMPILE_FLAGS "-Wno-array-bounds")
