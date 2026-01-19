@@ -11,7 +11,9 @@
 
 #include "../config.h"
 #include "../logging.h"
+#include "../network.h"
 #include "../nvhttp.h"
+#include "../rtsp.h"
 
 namespace starbeam {
 namespace handler {
@@ -34,11 +36,11 @@ namespace handler {
       asio::io_context io_context;
       tcp::socket socket(io_context);
 
-      // Determine local port
-      int local_port = config::sunshine.port;
-      if (is_https) {
-        local_port += nvhttp::PORT_HTTPS;  // -5 offset for HTTPS
-      }
+      // Determine local port using net::map_port
+      uint16_t local_port = net::map_port(is_https ? nvhttp::PORT_HTTPS : nvhttp::PORT_HTTP);
+
+      BOOST_LOG(debug) << "starbeam::handler: Connecting to local "
+                       << (is_https ? "HTTPS" : "HTTP") << " server at 127.0.0.1:" << local_port;
 
       tcp::resolver resolver(io_context);
       auto endpoints = resolver.resolve("127.0.0.1", std::to_string(local_port));
@@ -189,8 +191,10 @@ namespace handler {
       asio::io_context io_context;
       tcp::socket socket(io_context);
 
-      // RTSP port is typically base_port + 21 for setup, but we'll use the standard offset
-      int rtsp_port = config::sunshine.port - 1;  // RTSP_SETUP_PORT offset
+      // RTSP port using net::map_port
+      uint16_t rtsp_port = net::map_port(rtsp_stream::RTSP_SETUP_PORT);
+
+      BOOST_LOG(debug) << "starbeam::handler: Connecting to local RTSP server at 127.0.0.1:" << rtsp_port;
 
       tcp::resolver resolver(io_context);
       auto endpoints = resolver.resolve("127.0.0.1", std::to_string(rtsp_port));
