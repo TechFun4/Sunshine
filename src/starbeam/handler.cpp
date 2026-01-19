@@ -39,13 +39,23 @@ namespace handler {
       // Determine local port using net::map_port
       uint16_t local_port = net::map_port(is_https ? nvhttp::PORT_HTTPS : nvhttp::PORT_HTTP);
 
-      BOOST_LOG(debug) << "starbeam::handler: Connecting to local "
-                       << (is_https ? "HTTPS" : "HTTP") << " server at 127.0.0.1:" << local_port;
+      BOOST_LOG(info) << "starbeam::handler: " << method << " " << path
+                      << (query.empty() ? "" : "?" + query)
+                      << " from " << client_addr
+                      << " -> connecting to 127.0.0.1:" << local_port;
 
       tcp::resolver resolver(io_context);
       auto endpoints = resolver.resolve("127.0.0.1", std::to_string(local_port));
 
-      asio::connect(socket, endpoints);
+      boost::system::error_code ec;
+      asio::connect(socket, endpoints, ec);
+
+      if (ec) {
+        BOOST_LOG(error) << "starbeam::handler: Failed to connect to local server: " << ec.message();
+        return {503, "text/plain", "Service Unavailable: Cannot connect to local server"};
+      }
+
+      BOOST_LOG(info) << "starbeam::handler: Connected to local server";
 
       // Build HTTP request
       std::ostringstream request_stream;
@@ -87,15 +97,26 @@ namespace handler {
 
       std::string request = request_stream.str();
 
+      BOOST_LOG(info) << "starbeam::handler: Sending request to local server";
+
       // Send request
-      asio::write(socket, asio::buffer(request));
+      asio::write(socket, asio::buffer(request), ec);
+
+      if (ec) {
+        BOOST_LOG(error) << "starbeam::handler: Failed to send request: " << ec.message();
+        return {503, "text/plain", "Service Unavailable: Failed to send request"};
+      }
 
       // Read response
       asio::streambuf response_buf;
-      boost::system::error_code ec;
 
       // Read until we get headers
       asio::read_until(socket, response_buf, "\r\n\r\n", ec);
+
+      if (ec && ec != asio::error::eof) {
+        BOOST_LOG(error) << "starbeam::handler: Failed to read response headers: " << ec.message();
+        return {503, "text/plain", "Service Unavailable: Failed to read response"};
+      }
 
       std::istream response_stream(&response_buf);
 
@@ -167,8 +188,8 @@ namespace handler {
 
       socket.close();
 
-      BOOST_LOG(debug) << "starbeam::handler: HTTP " << method << " " << path
-                       << " -> " << status_code;
+      BOOST_LOG(info) << "starbeam::handler: HTTP " << method << " " << path
+                      << " -> " << status_code << " (" << response_body.size() << " bytes)";
 
       return {status_code, content_type, response_body};
 
@@ -194,12 +215,20 @@ namespace handler {
       // RTSP port using net::map_port
       uint16_t rtsp_port = net::map_port(rtsp_stream::RTSP_SETUP_PORT);
 
-      BOOST_LOG(debug) << "starbeam::handler: Connecting to local RTSP server at 127.0.0.1:" << rtsp_port;
+      BOOST_LOG(info) << "starbeam::handler: RTSP " << method << " " << uri
+                      << " from " << client_addr
+                      << " -> connecting to 127.0.0.1:" << rtsp_port;
 
       tcp::resolver resolver(io_context);
       auto endpoints = resolver.resolve("127.0.0.1", std::to_string(rtsp_port));
 
-      asio::connect(socket, endpoints);
+      boost::system::error_code ec;
+      asio::connect(socket, endpoints, ec);
+
+      if (ec) {
+        BOOST_LOG(error) << "starbeam::handler: Failed to connect to RTSP server: " << ec.message();
+        return {503, "Service Unavailable", {}, ""};
+      }
 
       // Build RTSP request
       std::ostringstream request_stream;
@@ -226,13 +255,22 @@ namespace handler {
       std::string request = request_stream.str();
 
       // Send request
-      asio::write(socket, asio::buffer(request));
+      asio::write(socket, asio::buffer(request), ec);
+
+      if (ec) {
+        BOOST_LOG(error) << "starbeam::handler: Failed to send RTSP request: " << ec.message();
+        return {503, "Service Unavailable", {}, ""};
+      }
 
       // Read response
       asio::streambuf response_buf;
-      boost::system::error_code ec;
 
       asio::read_until(socket, response_buf, "\r\n\r\n", ec);
+
+      if (ec && ec != asio::error::eof) {
+        BOOST_LOG(error) << "starbeam::handler: Failed to read RTSP response: " << ec.message();
+        return {503, "Service Unavailable", {}, ""};
+      }
 
       std::istream response_stream(&response_buf);
 
@@ -291,8 +329,8 @@ namespace handler {
 
       socket.close();
 
-      BOOST_LOG(debug) << "starbeam::handler: RTSP " << method << " " << uri
-                       << " -> " << status_code;
+      BOOST_LOG(info) << "starbeam::handler: RTSP " << method << " " << uri
+                      << " -> " << status_code << " (" << response_body.size() << " bytes)";
 
       return {status_code, reason, response_headers, response_body};
 
